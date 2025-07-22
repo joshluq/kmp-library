@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 group = "io.github.kotlin"
@@ -20,6 +21,21 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
+    cocoapods {
+        summary = "Kotlin sample project with CocoaPods dependencies"
+        homepage = "https://github.com/Kotlin/kotlin-with-cocoapods-library-sample"
+
+        ios.deploymentTarget = "16.0"
+       // podfile = project.file("../iosApp/Podfile")
+
+        /**
+         * Example of usage local Swift CocoaPods library.
+         */
+        framework {
+            baseName = "KotlinLibrary"
+            isStatic = true
+        }
+    }
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -27,9 +43,21 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
-            dependencies {
-                //put your multiplatform dependencies here
+                dependencies {
+                    implementation(libs.ktor.client.content.negotiation)
+                    implementation(libs.ktor.serialization.kotlinx.json)
+                    implementation(libs.ktor.client.logging)
             }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation("io.ktor:ktor-client-okhttp:2.3.7")
+            }
+        }
+
+        val iosMain by creating {
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:3.2.2")            }
         }
         val commonTest by getting {
             dependencies {
